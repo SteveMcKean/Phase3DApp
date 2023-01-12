@@ -1,0 +1,129 @@
+﻿<dx:ThemedWindow
+    x:Class="Phase3D.UI.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:prism="http://prismlibrary.com/"
+    Title="{Binding Title}"
+    Width="1625"
+    Height="1250"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:NotificationService
+            ApplicationId="Phase3D"
+            CustomNotificationPosition="BottomRight"
+            PredefinedNotificationTemplate="ShortHeaderAndTwoTextFields" />
+
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <dxc:Chart3DControl BorderThickness="0">
+            <dxc:Chart3DControl.Legends>
+                <dxc:Legend
+                    x:Name="Legend"
+                    Background="Transparent"
+                    BorderBrush="Transparent" />
+            </dxc:Chart3DControl.Legends>
+
+            <dxc:Series3DStorage>
+                <dxc:Series3D DisplayName="State Populations" YArgumentScaleType="Auto">
+                    <dxc:Series3D.View>
+                        <dxc:Point3DSeriesView>
+                            <dxc:Point3DSeriesView.MarkerModel>
+                                <dxc:Marker3DSpherePointModel SphereDetalizationLevel="Low" />
+                            </dxc:Point3DSeriesView.MarkerModel>
+
+                            <dxc:Point3DSeriesView.Colorizer>
+                                <dxc:RangeColorizer3D
+                                    ApproximateColors="True"
+                                    RangeStops="500000 900000 1200000 7500000 20000000 40000000"
+                                    ShowInLegend="True">
+                                    <dxc:RangeColorizer3D.Palette>
+                                        <dxc:CustomPalette>
+                                            <dxc:CustomPalette.Colors>
+                                                <Color>#6EC95C</Color>
+                                                <Color>#ACE45C</Color>
+                                                <Color>#E5E335</Color>
+                                                <Color>#FEAD2D</Color>
+                                                <Color>#FF5B61</Color>
+                                                <Color>#FF0B29</Color>
+                                            </dxc:CustomPalette.Colors>
+                                        </dxc:CustomPalette>
+                                    </dxc:RangeColorizer3D.Palette>
+                                </dxc:RangeColorizer3D>
+                            </dxc:Point3DSeriesView.Colorizer>
+
+                        </dxc:Point3DSeriesView>
+                    </dxc:Series3D.View>
+                    <dxc:SeriesPoint3DDataSourceAdapter
+                        ColorDataMember="ColorIndex"
+                        DataSource="{Binding Populations}"
+                        ValueDataMember="Population"
+                        XArgumentDataMember="State"
+                        YArgumentDataMember="Year" />
+
+                </dxc:Series3D>
+            </dxc:Series3DStorage>
+
+        </dxc:Chart3DControl>
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="6,6,0,6"
+            HorizontalAlignment="Left"
+            Orientation="Horizontal">
+
+            <TextBlock
+                Margin="3"
+                VerticalAlignment="Center"
+                Text="Delay in seconds: " />
+            <dxe:SpinEdit
+                Width="90"
+                Height="32"
+                EditValue="{Binding Delay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Increment=".5"
+                MaxValue="7"
+                MinValue="0" />
+
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="6"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+
+            <dx:SimpleButton
+                Width="auto"
+                Height="28"
+                Margin="2"
+                Command="{Binding LoadHistoryCommand}"
+                Content="Load Historical" />
+
+            <dx:SimpleButton
+                Width="auto"
+                Height="28"
+                Margin="2"
+                Command="{Binding LoadDataCommand}"
+                Content="Load Delayed" />
+
+            <dx:SimpleButton
+                Width="auto"
+                Height="28"
+                Margin="2"
+                Command="{Binding CancelLoadCommand}"
+                Content="Cancel Load" />
+
+        </StackPanel>
+
+    </Grid>
+</dx:ThemedWindow>
