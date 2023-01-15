@@ -2,7 +2,8 @@
 using System.Globalization;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using DataAccess.Models;
+using Phase3D.Core.Contracts;
+using Phase3D.Models;
 
 namespace DataAccess
 {
@@ -14,13 +15,13 @@ namespace DataAccess
         private TimeSpan pushDelay = TimeSpan.FromSeconds(0);
         private decimal pushDelayValue;
 
-        private readonly ISubject<PopulationInfo> populationsSubject = new Subject<PopulationInfo>();
+        private readonly ISubject<PopulationData> populationsSubject = new Subject<PopulationData>();
 
-        public IObservable<PopulationInfo> PopulationsSubject => populationsSubject.AsObservable();
+        public IObservable<PopulationData> PopulationsSubject => populationsSubject.AsObservable();
         
-        public async Task<IEnumerable<PopulationInfo>> GetPopulationsAsync(string path)
+        public async Task<IEnumerable<PopulationData>> GetPopulationsAsync(string path)
         {
-            var populations = new Collection<PopulationInfo>();
+            var populations = new Collection<PopulationData>();
             cancellationTokenSource = new CancellationTokenSource();
             
             try
@@ -34,7 +35,7 @@ namespace DataAccess
                     if (string.IsNullOrWhiteSpace(serializedValues?[0]))
                         continue;
 
-                    var populationInfo = new PopulationInfo(serializedValues[0],
+                    var populationInfo = new PopulationData(serializedValues[0],
                         Convert.ToInt32(serializedValues[1], CultureInfo.InvariantCulture),
                         Convert.ToInt32(serializedValues[2], CultureInfo.InvariantCulture), 0);
 
@@ -72,7 +73,7 @@ namespace DataAccess
                     if (string.IsNullOrWhiteSpace(serializedValues?[0]))
                         continue;
 
-                    var populationInfo = new PopulationInfo(serializedValues[0],
+                    var populationInfo = new PopulationData(serializedValues[0],
                         Convert.ToInt32(serializedValues[1], CultureInfo.InvariantCulture),
                         Convert.ToInt32(serializedValues[2], CultureInfo.InvariantCulture),0);
 

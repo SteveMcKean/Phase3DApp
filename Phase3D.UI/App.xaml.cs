@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using DataAccess;
+using Phase3D.Core.Contracts;
+using Phase3D.Services;
 using Phase3D.UI.Views;
 using Prism.Ioc;
 
@@ -19,6 +21,7 @@ namespace Phase3D.UI
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IDataLoader, DataLoader>();
+            containerRegistry.Register<IGrowthRateCalculator, GrowthRateCalculator>();
 
         }
        

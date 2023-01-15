@@ -26,6 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\Phase3D.Core\Phase3D.Core.csproj" />
+    <ProjectReference Include="..\Phase3D.Services\Phase3D.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="BoolExtensions.cs" />

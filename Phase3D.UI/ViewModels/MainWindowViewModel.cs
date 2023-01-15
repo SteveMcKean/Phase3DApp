@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using DataAccess;
-using DataAccess.Models;
 using DevExpress.Mvvm;
-using DevExpress.Xpf.Charts;
+using Phase3D.Core.Contracts;
+using Phase3D.Models;
 using ReactiveUI;
 using Unit = System.Reactive.Unit;
 
@@ -15,22 +17,28 @@ namespace Phase3D.UI.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly Func<IDataLoader> dataLoader;
+        private readonly Func<PopulationGrowthViewModel> vmCreator;
         private readonly SynchronizationContext context;
         private IDisposable subscription;
         private IDataLoader loader;
-        
+
+        public bool IsWaitIndicatorBusy { get; set; }
         public INotificationService NotificationService => GetService<INotificationService>();
+        public IDocumentManagerService DocumentManagerService => GetService<IDocumentManagerService>();
         public string Title => "Phase3D Demo Application";
         public ReactiveCommand<Unit, Unit> LoadDataCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> CancelLoadCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> LoadHistoryCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> LoadGrowthCommand { get; private set; }
         public decimal Delay { get; set; } = 1;
         public bool IsBusy { get; set; }
-        public ObservableCollection<PopulationInfo> Populations { get; set; }
+        public ObservableCollection<PopulationData> Populations { get; set; }
 
-        public MainWindowViewModel(Func<IDataLoader> dataLoader)
+        public MainWindowViewModel(Func<IDataLoader> dataLoader, Func<PopulationGrowthViewModel> vmCreator)
         {
             this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
+            this.vmCreator = vmCreator ?? throw new ArgumentException(nameof(vmCreator));
+            
             context = SynchronizationContext.Current;
 
             var canExecuteObservable = this.WhenAnyValue(x => x.IsBusy)
@@ -39,14 +47,36 @@ namespace Phase3D.UI.ViewModels
             var cancelCanExecuteObservable = this.WhenAnyValue(x => x.IsBusy)
                 .Select(x => x);
 
+            var growthRateCanExecute =
+                this.WhenAnyValue(x => x.Populations, x => x.IsBusy)
+                    .Select(x => x.Item1 != null && x.Item1.Any() && !x.Item2);
+
             LoadDataCommand = ReactiveCommand.Create(StreamDataLoad, canExecuteObservable, Scheduler.CurrentThread);
             CancelLoadCommand = ReactiveCommand.Create(CancelLoad, cancelCanExecuteObservable, Scheduler.CurrentThread);
             LoadHistoryCommand = ReactiveCommand.Create(LoadAsHistorical, canExecuteObservable, Scheduler.CurrentThread);
+            LoadGrowthCommand = ReactiveCommand.Create(LoadGrowth, growthRateCanExecute, Scheduler.CurrentThread);
             
-            Populations = new ObservableCollection<PopulationInfo>();
+            Populations = new ObservableCollection<PopulationData>();
             
         }
-        
+
+        private void LoadGrowth()
+        {
+            IsWaitIndicatorBusy = true;
+            IsBusy = true;
+            
+            var viewModel = vmCreator();
+            viewModel.PopulationData = Populations;
+            
+            var doc = DocumentManagerService.CreateDocument("PopulationGrowthView", viewModel);
+
+            IsWaitIndicatorBusy = false;
+            IsBusy = false;
+            
+            doc.Show();
+            
+        }
+
         private void LoaderSubscribe()
         {
             subscription?.Dispose();
@@ -88,12 +118,14 @@ namespace Phase3D.UI.ViewModels
         private async void LoadAsHistorical()
         {
             IsBusy = true;
+            IsWaitIndicatorBusy = true;
             
             Populations.Clear();
             LoaderSubscribe();
-            
+           
             Populations.AddRange(await loader?.GetPopulationsAsync("Data/historical.csv")!);
             IsBusy = false;
+            IsWaitIndicatorBusy = false;
            
             var notification = NotificationService.CreatePredefinedNotification("Phase3D Demo App", "Simulation completed", "", null, "Space3D");
             await notification.ShowAsync();
@@ -104,13 +136,14 @@ namespace Phase3D.UI.ViewModels
         {
             loader?.CancelLoad();
             IsBusy = false;
+            IsWaitIndicatorBusy = false;
 
             var notification = NotificationService.CreatePredefinedNotification("Phase3D Demo App", "Simulation cancelled", "", null, "Space3D");
             await notification.ShowAsync();
             
         }
 
-        private void HandlePopulationInfo(PopulationInfo args)
+        private void HandlePopulationInfo(PopulationData args)
         {
             context?.Post((_) =>
                 {

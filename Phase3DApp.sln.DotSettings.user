@@ -9,5 +9,6 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=75a97a60_002Db4ac_002D43aa_002D861e_002D2de2355dd411/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DataAccessTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::8E229904-DAEE-4CCE-8704-2C97B7C9CC4B::net7.0::Phase3D.Tests.DataAccessTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::8E229904-DAEE-4CCE-8704-2C97B7C9CC4B::net7.0::Phase3D.Tests.GrowthCalculatorTests.Calculate_returns_correct_growth_per_year_per_state&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

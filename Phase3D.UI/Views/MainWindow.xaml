@@ -18,6 +18,18 @@
             CustomNotificationPosition="BottomRight"
             PredefinedNotificationTemplate="ShortHeaderAndTwoTextFields" />
 
+        <dxmvvm:CurrentWindowService />
+
+        <dx:WindowedDocumentUIService>
+            <dx:WindowedDocumentUIService.WindowStyle>
+                <Style TargetType="dx:DXWindow">
+                    <Setter Property="Width" Value="1100" />
+                    <Setter Property="Height" Value="800" />
+                </Style>
+
+            </dx:WindowedDocumentUIService.WindowStyle>
+        </dx:WindowedDocumentUIService>
+
     </dxmvvm:Interaction.Behaviors>
 
     <Grid>
@@ -120,10 +132,33 @@
                 Width="auto"
                 Height="28"
                 Margin="2"
+                Command="{Binding LoadGrowthCommand}"
+                Content="Load Growth" />
+
+            <dx:SimpleButton
+                Width="auto"
+                Height="28"
+                Margin="2"
                 Command="{Binding CancelLoadCommand}"
                 Content="Cancel Load" />
 
         </StackPanel>
+
+
+        <dx:WaitIndicator
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Content="Loading..."
+            DeferedVisibility="{Binding IsWaitIndicatorBusy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <dx:WaitIndicator.ContentTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock FontSize="20" Text="Please Wait" />
+                        <TextBlock Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </dx:WaitIndicator.ContentTemplate>
+        </dx:WaitIndicator>
 
     </Grid>
 </dx:ThemedWindow>
