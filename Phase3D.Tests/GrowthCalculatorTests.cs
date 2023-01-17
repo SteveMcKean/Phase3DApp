@@ -19,7 +19,7 @@ public class GrowthCalculatorTests
         const string path = "Data/historical.csv";
         var populationGrowth = new List<GrowthRate>();
         
-        var dataLoader = new DataLoader();
+        var dataLoader = new FileDataProvider();
         var populations = await dataLoader.GetPopulationsAsync(path);
 
         var query = populations.ToList()

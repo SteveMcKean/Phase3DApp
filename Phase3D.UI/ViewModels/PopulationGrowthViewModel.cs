@@ -13,12 +13,14 @@ namespace Phase3D.UI.ViewModels;
 public class PopulationGrowthViewModel: ViewModelBase
 {
     private readonly IGrowthRateCalculator growthRateCalculator;
+    
     public ICurrentWindowService CurrentWindowService => GetService<ICurrentWindowService>();
     public ObservableCollection<GrowthRate> GrowthRates { get; set; }
     
     public string Title => "Population Growth by Year";
     public bool IsWaitIndicatorBusy { get; set; }
     public IEnumerable<PopulationData> PopulationData { get; set; }
+    
     public PopulationGrowthViewModel(IGrowthRateCalculator growthRateCalculator)
     {
         GrowthRates = new ObservableCollection<GrowthRate>();

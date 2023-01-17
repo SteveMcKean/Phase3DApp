@@ -10,7 +10,7 @@ namespace Phase3D.Tests
         {
             const string path = "Data/historical.csv";
 
-            var dataLoader = new DataLoader();
+            var dataLoader = new FileDataProvider();
             var populations = await dataLoader.GetPopulationsAsync(path);
 
             Assert.NotNull(populations);

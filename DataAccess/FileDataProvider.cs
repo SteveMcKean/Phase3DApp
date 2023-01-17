@@ -7,7 +7,7 @@ using Phase3D.Models;
 
 namespace DataAccess
 {
-    public class DataLoader : IDataLoader
+    public class FileDataProvider : IDataProvider
     {
         private CancellationTokenSource cancellationTokenSource = new();
         private readonly Dictionary<string, double> colorIndexes = new ();
@@ -108,7 +108,7 @@ namespace DataAccess
 
         public void CancelLoad()
         {
-            cancellationTokenSource?.Cancel();
+            cancellationTokenSource.Cancel();
             
         }
         

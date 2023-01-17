@@ -20,7 +20,7 @@ namespace Phase3D.UI
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register<IDataLoader, DataLoader>();
+            containerRegistry.Register<IDataProvider, FileDataProvider>();
             containerRegistry.Register<IGrowthRateCalculator, GrowthRateCalculator>();
 
         }

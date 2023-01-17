@@ -16,11 +16,11 @@ namespace Phase3D.UI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly Func<IDataLoader> dataLoader;
+        private readonly Func<IDataProvider> dataLoader;
         private readonly Func<PopulationGrowthViewModel> vmCreator;
         private readonly SynchronizationContext context;
         private IDisposable subscription;
-        private IDataLoader loader;
+        private IDataProvider provider;
 
         public bool IsWaitIndicatorBusy { get; set; }
         public INotificationService NotificationService => GetService<INotificationService>();
@@ -34,7 +34,7 @@ namespace Phase3D.UI.ViewModels
         public bool IsBusy { get; set; }
         public ObservableCollection<PopulationData> Populations { get; set; }
 
-        public MainWindowViewModel(Func<IDataLoader> dataLoader, Func<PopulationGrowthViewModel> vmCreator)
+        public MainWindowViewModel(Func<IDataProvider> dataLoader, Func<PopulationGrowthViewModel> vmCreator)
         {
             this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
             this.vmCreator = vmCreator ?? throw new ArgumentException(nameof(vmCreator));
@@ -82,10 +82,10 @@ namespace Phase3D.UI.ViewModels
             subscription?.Dispose();
             subscription = null;
 
-            loader = null;
-            loader = dataLoader();
+            provider = null;
+            provider = dataLoader();
             
-            subscription = loader.PopulationsSubject
+            subscription = provider.PopulationsSubject
                 .SubscribeOn(Scheduler.Default)
                 .ObserveOn(Scheduler.Default)
                 .Subscribe(HandlePopulationInfo, ex =>
@@ -123,7 +123,7 @@ namespace Phase3D.UI.ViewModels
             Populations.Clear();
             LoaderSubscribe();
            
-            Populations.AddRange(await loader?.GetPopulationsAsync("Data/historical.csv")!);
+            Populations.AddRange(await provider?.GetPopulationsAsync("Data/historical.csv")!);
             IsBusy = false;
             IsWaitIndicatorBusy = false;
            
@@ -134,7 +134,7 @@ namespace Phase3D.UI.ViewModels
 
         private async void CancelLoad()
         {
-            loader?.CancelLoad();
+            provider?.CancelLoad();
             IsBusy = false;
             IsWaitIndicatorBusy = false;
 
@@ -163,14 +163,14 @@ namespace Phase3D.UI.ViewModels
             LoaderSubscribe();
             Populations.Clear();
 
-            loader?.SetDelay(Delay);
-            loader?.GetPopulations("Data/historical.csv");
+            provider?.SetDelay(Delay);
+            provider?.GetPopulations("Data/historical.csv");
            
         }
 
         private void OnDelayChanged()
         {
-            loader?.SetDelay(Delay);
+            provider?.SetDelay(Delay);
 
         }
     }

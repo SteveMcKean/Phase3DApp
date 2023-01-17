@@ -1,9 +1,8 @@
-﻿
-using Phase3D.Models;
+﻿using Phase3D.Models;
 
 namespace Phase3D.Core.Contracts;
 
-public interface IDataLoader
+public interface IDataProvider
 {
     Task<IEnumerable<PopulationData>> GetPopulationsAsync(string path);
     IObservable<PopulationData> PopulationsSubject { get; }
