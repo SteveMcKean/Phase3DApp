@@ -397,3 +397,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+DataAccess/bin/Debug/net7.0/DataAccess.pdb
+DataAccess/bin/Debug/net7.0/DataAccess.dll
